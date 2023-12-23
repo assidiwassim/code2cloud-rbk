@@ -1,32 +1,32 @@
-# This is a basic workflow to help you get started with Actions
+name: Nodejs App CI/CD.
 
-name: Code to cloud workshop
-
-# Controls when the workflow will run
 on:
-  # Triggers the workflow on push or pull request events but only for the "main" branch
   push:
     branches: [ "main" ]
   pull_request:
     branches: [ "main" ]
 
-# A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
-  # This workflow contains a single job called "build"
-  build:
-    # The type of runner that the job will run on
+
+  build-and-push:
+
     runs-on: ubuntu-latest
 
-    # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
-      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
-      - name: telecharji lcode w 7otou fi machine 
-        uses: actions/checkout@v3
 
-      # Runs a single command using the runners shell
-      - name: a3mel log hello
-        run: echo Hello!
+    - name: Checkout Code 
+      uses: actions/checkout@v3
 
-      # Runs a set of commands using the runners shell
-      - name: a3mel log wa7da o5ra  hello Le bon developpeur
-        run: echo hello Le bon developpeur!
+    - name: Build the Docker image
+      run: docker build -t code2cloud-nodejs .  
+
+    - name: Log in to Docker Hub
+      uses: docker/login-action@v1
+      with:
+        username: ${{ secrets.DOCKER_USERNAME }}
+        password: ${{ secrets.DOCKER_PASSWORD }}
+
+    - name: Push Image to Docker Hub
+      run: |
+        docker tag code2cloud-nodejs ${{ secrets.DOCKER_USERNAME }}/code2cloud-nodejs:latest
+        docker push ${{ secrets.DOCKER_USERNAME }}/code2cloud-nodejs:latest
